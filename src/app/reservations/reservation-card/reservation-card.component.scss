@@ -1,0 +1,24 @@
+.card-header {
+  padding: 0.9375rem;
+}
+
+.card {
+  margin-top: -1px;
+  border: 1px solid #df1b3b !important;
+  padding: 10px;
+}
+
+.card-buttons {
+  background-color: #df1b3b !important;
+  position: absolute;
+  width: 100%;
+  transform: translateY(-100%);
+  z-index: -1;
+}
+
+.delete-btn-container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  background-color: #df1b3b;
+}

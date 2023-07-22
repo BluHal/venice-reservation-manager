@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "venice-reservation-manager": {
+      "hosting": {
+        "venice-reservation-manager": [
+          "venice-reservation-manager"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "venice-reservation-manager"
+  }
+}

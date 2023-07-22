@@ -1,0 +1,28 @@
+<div>
+  <mat-card
+    class="card"
+    (touchstart)="swipe($event, 'start')"
+    (touchend)="swipe($event, 'end')"
+    [@cardAnimator]="currentState"
+    (@cardAnimator.start)="onAnimationStarted()"
+    (@cardAnimator.done)="onAnimationCompleted()"
+    (onClick)="showTicket()"
+  >
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        {{ reservation.movieTitle }}
+      </mat-card-title>
+      <mat-card-subtitle>{{ reservation.date }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-card class="card card-buttons">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        {{ reservation.movieTitle }}
+      </mat-card-title>
+      <h1>DELETE</h1>
+      <mat-card-subtitle>{{ reservation.date }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+</div>

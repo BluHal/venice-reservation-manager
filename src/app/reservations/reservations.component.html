@@ -1,0 +1,9 @@
+<div *ngFor="let reservation of reservations">
+  <app-reservation-card [reservation]="reservation"></app-reservation-card>
+</div>
+
+<div class="add-button-container">
+  <button mat-fab color="primary">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
