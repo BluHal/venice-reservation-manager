@@ -1,24 +1,36 @@
-.card-header {
-  padding: 0.9375rem;
+.card-container {
+  display: flex;
 }
 
 .card {
   margin-top: -1px;
-  border: 1px solid #df1b3b !important;
+  border-top: 1px solid #df1b3b !important;
   padding: 10px;
+  height: 100px;
+}
+
+.card-content {
+  width: 100%;
 }
 
 .card-buttons {
   background-color: #df1b3b !important;
   position: absolute;
-  width: 100%;
-  transform: translateY(-100%);
+  right: 0;
+  height: 100px;
+  width: 75px;
   z-index: -1;
-}
-
-.delete-btn-container {
   display: flex;
   justify-content: end;
   align-items: center;
+}
+
+.card-header {
+  padding: 0.9375rem;
+}
+
+.delete-btn {
   background-color: #df1b3b;
+  color: white;
+  box-shadow: none;
 }

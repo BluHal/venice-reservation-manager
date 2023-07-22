@@ -23,7 +23,7 @@ import { Reservation } from './reservation.interface';
   styleUrls: ['./reservation-card.component.scss'],
   animations: [
     trigger('cardAnimator', [
-      state('left', style({ transform: 'translateX(-19%)' })),
+      state('left', style({ transform: 'translateX(-75px)' })),
       state('original', style({ transform: 'translateX(0)' })),
       transition('original => left', [animate('0.15s ease-in-out')]),
       transition('left => original', [animate('0.15s ease-in-out')]),
@@ -58,6 +58,10 @@ export class ReservationCardComponent {
 
   onAnimationStarted(): void {
     this.delBtnZIndex = '-1';
+  }
+
+  deleteItem(): void {
+    console.log('delete item');
   }
 
   showTicket(): void {}
