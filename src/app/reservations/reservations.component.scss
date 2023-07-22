@@ -1,6 +1,12 @@
+@use "../../utilities/variables" as v;
+
 .add-button-container {
   position: fixed;
   right: 0;
   bottom: 0;
   padding: 0 5px 5px 0;
+}
+
+.add-btn {
+  background-color: v.$red;
 }

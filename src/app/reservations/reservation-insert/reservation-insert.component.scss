@@ -1,0 +1,30 @@
+.form-field {
+  width: 100%;
+}
+
+.save-btn-container {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  padding: 0 20px 20px 0;
+  transform: scale(1.5);
+}
+
+.save-icon {
+  transform: scale(1.5);
+}
+
+.file-upload-field {
+  display: none;
+}
+
+.file-input-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.file-upload-btn {
+  transform: scale(1.5);
+}

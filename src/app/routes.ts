@@ -8,4 +8,11 @@ export const routes: Route[] = [
         (mod) => mod.ReservationsComponent
       ),
   },
+  {
+    path: 'insert-reservation',
+    loadComponent: () =>
+      import(
+        './reservations/reservation-insert/reservation-insert.component'
+      ).then((mod) => mod.ReservationInsertComponent),
+  },
 ];

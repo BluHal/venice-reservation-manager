@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Reservation } from './reservation.interface';
+import { ReservationsService } from '../reservations.service';
 
 @Component({
   selector: 'app-reservation-card',
@@ -38,6 +39,8 @@ export class ReservationCardComponent {
   private swipeTime!: number;
   public delBtnZIndex: string = '-1';
 
+  constructor(private reservationsService: ReservationsService) {}
+
   swipeCardLeft(): void {
     if (this.currentState !== 'original') return;
     this.currentState = 'left';
@@ -61,7 +64,7 @@ export class ReservationCardComponent {
   }
 
   deleteItem(): void {
-    console.log('delete item');
+    this.reservationsService.deleteReservation(this.reservation.id);
   }
 
   showTicket(): void {}

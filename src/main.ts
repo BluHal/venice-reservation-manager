@@ -12,6 +12,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { routes } from './app/routes';
 import { provideRouter } from '@angular/router';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -25,5 +26,6 @@ bootstrapApplication(AppComponent, {
     ),
     provideAnimations(),
     provideRouter(routes),
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
   ],
 }).catch((err) => console.error(err));
