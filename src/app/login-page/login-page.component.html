@@ -1,0 +1,15 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+      <!-- Add Firebase authentication button for Google login -->
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="authService.GoogleAuth()"
+      >
+        Login with Google
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

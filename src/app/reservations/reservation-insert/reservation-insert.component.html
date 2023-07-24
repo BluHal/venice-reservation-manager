@@ -1,23 +1,37 @@
 <div class="insert-reservation-container">
-  <div class="file-input-container">
-    <input
-      #csvInput
-      type="file"
-      onclick="this.value=null"
-      (change)="csvInputChange($event)"
-      class="file-upload-field"
-    />
+  <form
+    class="insert-reservation-form"
+    [formGroup]="reservationForm"
+    (ngSubmit)="onSave()"
+  >
+    <div class="file-input-container">
+      <input
+        #csvInput
+        type="file"
+        onclick="this.value=null"
+        (change)="csvInputChange($event)"
+        class="file-upload-field"
+      />
 
-    <button mat-icon-button (click)="csvInput.click()" class="file-upload-btn">
-      <mat-icon *ngIf="!hasFile">upload</mat-icon>
-      <mat-icon *ngIf="hasFile">check</mat-icon>
-    </button>
-  </div>
+      <button
+        mat-icon-button
+        (click)="csvInput.click()"
+        class="file-upload-btn"
+        type="button"
+      >
+        <mat-icon *ngIf="!hasFile">upload</mat-icon>
+        <mat-icon *ngIf="hasFile">check</mat-icon>
+      </button>
+    </div>
 
-  <form class="insert-reservation-form">
+    <mat-form-field class="form-field">
+      <mat-label>Sala</mat-label>
+      <input matInput placeholder="Sala Grande" formControlName="location" />
+    </mat-form-field>
+
     <mat-form-field class="form-field">
       <mat-label>Film</mat-label>
-      <input matInput placeholder="The Godfather" />
+      <input matInput placeholder="The Godfather" formControlName="movie" />
     </mat-form-field>
 
     <mat-form-field class="form-field">
@@ -26,6 +40,7 @@
         matInput
         [matDatepicker]="picker"
         (dateChange)="onDateSetted('change', $event)"
+        formControlName="date"
       />
       <mat-datepicker-toggle
         matIconSuffix
@@ -36,17 +51,22 @@
 
     <mat-form-field class="form-field">
       <mat-label>Ora</mat-label>
-      <input [ngxTimepicker]="timePicker" matInput [format]="24" />
+      <input
+        [ngxTimepicker]="timePicker"
+        matInput
+        [format]="24"
+        formControlName="time"
+      />
       <ngx-material-timepicker
         #timePicker
         (timeSet)="onHourSetted($event)"
       ></ngx-material-timepicker>
     </mat-form-field>
-  </form>
 
-  <div class="save-btn-container">
-    <button mat-fab color="primary" type="button" (click)="addReservation()">
-      <mat-icon class="save-icon">save</mat-icon>
-    </button>
-  </div>
+    <div class="save-btn-container">
+      <button mat-fab color="primary" type="submit">
+        <mat-icon class="save-icon">save</mat-icon>
+      </button>
+    </div>
+  </form>
 </div>

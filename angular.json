@@ -33,7 +33,10 @@
               "src/styles.scss",
               "src/assets/fonts/biennaleFont.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/pdfjs-dist/build/pdf.js",
+              "node_modules/pdfjs-dist/build/pdf.worker.js"
+            ]
           },
           "configurations": {
             "production": {

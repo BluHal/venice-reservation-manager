@@ -15,4 +15,11 @@ export const routes: Route[] = [
         './reservations/reservation-insert/reservation-insert.component'
       ).then((mod) => mod.ReservationInsertComponent),
   },
+  {
+    path: 'log-in',
+    loadComponent: () =>
+      import('./login-page/login-page.component').then(
+        (mod) => mod.LoginPageComponent
+      ),
+  },
 ];

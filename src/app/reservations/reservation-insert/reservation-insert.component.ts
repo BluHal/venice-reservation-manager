@@ -13,9 +13,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import * as moment from 'moment';
-import { ReactiveFormsModule } from '@angular/forms';
-import { createWorker } from 'tesseract.js';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/shared/shared.service';
+import { PdfConversionService } from 'src/app/shared/pdf-conversion.service';
 
 @Component({
   selector: 'app-reservation-insert',
@@ -35,24 +35,30 @@ import { SharedService } from 'src/app/shared/shared.service';
   styleUrls: ['./reservation-insert.component.scss'],
 })
 export class ReservationInsertComponent implements OnInit {
-  worker!: Tesseract.Worker;
-  workerReady = false;
-
   private date?: Date | null;
   private time?: string;
   private dateTime?: string;
 
   private selectedFile: any;
   public hasFile = false;
-  private ocrResult = '';
-  private captureProgress = 0;
+  private ticketText: string = '';
 
-  constructor(private sharedService: SharedService) {
-    this.loadWorker();
-  }
+  public reservationForm = this.fb.group({
+    location: ['', Validators.required],
+    movie: ['', Validators.required],
+    date: [new Date(), Validators.required],
+    time: ['', Validators.required],
+  });
+
+  constructor(
+    private sharedService: SharedService,
+    private pdfConversionService: PdfConversionService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.sharedService.activateSpinner();
+    this.sharedService.disableSpinner();
   }
 
   onDateSetted(type: string, event: MatDatepickerInputEvent<Date>) {
@@ -75,30 +81,87 @@ export class ReservationInsertComponent implements OnInit {
     console.log(this.dateTime);
   }
 
-  csvInputChange(fileInputEvent: any) {
-    console.log(fileInputEvent.target.files[0]);
+  async csvInputChange(fileInputEvent: any) {
     this.selectedFile = fileInputEvent.target.files[0];
     this.hasFile = true;
+
+    const file: File = fileInputEvent.target.files[0];
+    if (file) {
+      try {
+        this.ticketText = await this.pdfConversionService.convertToText(file);
+        this.getSetTicketLocation();
+        this.getSetTicketMovie();
+        this.getSetTicketDateTime();
+      } catch (error) {
+        console.error('Error converting PDF:', error);
+        this.ticketText = '';
+      }
+    }
   }
 
-  async loadWorker() {
-    this.worker = await createWorker({
-      logger: (progress) => {
-        console.log(progress);
-        if (progress.status == 'recognizing test') {
-          this.captureProgress = parseInt('' + progress.progress * 100);
-        }
-      },
+  onSave(): void {
+    console.log(
+      'submitted form',
+      this.reservationForm.value,
+      this.reservationForm.invalid
+    );
+  }
+
+  getSetTicketLocation(): void {
+    const location = this.ticketText
+      .substring(0, this.ticketText.indexOf('-'))
+      .trimEnd()
+      .trimStart();
+    console.log(location);
+
+    this.reservationForm.patchValue({
+      location,
     });
-
-    await this.worker.load();
-    await this.worker.loadLanguage('eng');
-    await this.worker.initialize('eng');
-    this.workerReady = true;
-    this.sharedService.disableSpinner();
   }
 
-  async recognizeFile() {
-    //const result = await this.worker.recognize(this.worker.getPDF())
+  getSetTicketMovie(): void {
+    const ticketCleaned = this.ticketText
+      .substring(
+        this.ticketText.indexOf('Venezia') + 7,
+        this.ticketText.length - 1
+      )
+      .trimStart();
+    const reservationDate = this.sharedService
+      .getDateTimeFromString(this.ticketText)
+      .split(' ')[0]
+      .trim();
+
+    const movieTitle = ticketCleaned
+      .substring(0, ticketCleaned.indexOf(reservationDate))
+      .trimEnd();
+    console.log(movieTitle);
+
+    this.reservationForm.patchValue({
+      movie: movieTitle,
+    });
+  }
+
+  getSetTicketDateTime(): void {
+    const ticketDateTime = this.sharedService.getDateTimeFromString(
+      this.ticketText
+    );
+
+    if (ticketDateTime == '') return;
+    const ticketDate: string = ticketDateTime.split(' ')[0].trim();
+    const ticketTime: string = ticketDateTime.split(' ')[1].trim();
+    console.log(
+      new Date(ticketDate).getFullYear(),
+      new Date(ticketDate).getDate(),
+      new Date(ticketDate).getMonth() + 1
+    );
+
+    this.reservationForm.patchValue({
+      date: new Date(
+        new Date(ticketDate).getFullYear(),
+        new Date(ticketDate).getDate() - 1,
+        new Date(ticketDate).getMonth() + 1
+      ),
+      time: ticketTime,
+    });
   }
 }
