@@ -3,7 +3,6 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { Router, RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
 import { SharedService } from './shared/shared.service';
 
 @Component({

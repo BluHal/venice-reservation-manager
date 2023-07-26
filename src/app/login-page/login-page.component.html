@@ -1,15 +1,17 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-title>Login</mat-card-title>
-    <mat-card-content>
-      <!-- Add Firebase authentication button for Google login -->
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="authService.GoogleAuth()"
-      >
-        Login with Google
-      </button>
-    </mat-card-content>
-  </mat-card>
+  <span class="icon-lion"></span>
+  <h2>Login</h2>
+  <h2>Gestione Prenotazioni</h2>
+  <br>
+  <button mat-raised-button class="login-button" (click)="authService.GoogleAuth()">
+    <div class="log-button-content">
+      <div class="google-icon-container">
+        <img src="/assets/icons/google-icon.png">
+      </div>
+      <div>
+        Login con Google
+      </div>
+    </div>
+
+  </button>
 </div>

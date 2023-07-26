@@ -1,9 +1,10 @@
 {
-  "hosting": [
-    {
-      "target": "venice-reservation-manager",
-      "source": ".",
-      "frameworksBackend": {}
-    }
-  ]
+  "hosting": {
+    "public": "dist/venice-reservation-manager",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
 }
