@@ -16,6 +16,10 @@ import * as moment from 'moment';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/shared/shared.service';
 import { PdfConversionService } from 'src/app/shared/pdf-conversion.service';
+import { Reservation } from '../reservation-card/reservation.interface';
+import { ReplaySubject } from 'rxjs';
+import { ReservationsService } from '../reservations.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-reservation-insert',
@@ -36,10 +40,14 @@ import { PdfConversionService } from 'src/app/shared/pdf-conversion.service';
 })
 export class ReservationInsertComponent implements OnInit {
   private date?: Date | null;
-  private time?: string;
-  private dateTime?: string;
+  private time: string = '';
+  private dateTime?: Date;
+  private formatDate: string = '';
+  private formatTime: string = '';
+  private formatDateTime: string = '';
 
   private selectedFile: any;
+  private selectedFileContent: string = '';
   public hasFile = false;
   private ticketText: string = '';
 
@@ -52,6 +60,7 @@ export class ReservationInsertComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
+    private reservationsService: ReservationsService,
     private pdfConversionService: PdfConversionService,
     private fb: FormBuilder
   ) {}
@@ -69,26 +78,17 @@ export class ReservationInsertComponent implements OnInit {
     this.time = time;
   }
 
-  addReservation(): void {
-    const hours = this.time?.split(':')[0];
-    const minutes = this.time?.split(':')[1];
-    this.dateTime = moment(this.date)
-      .add(hours, 'hours')
-      .add(minutes, 'minutes')
-      .format('DD/MM/YYYY hh:mm');
-
-    console.log(this.selectedFile);
-    console.log(this.dateTime);
-  }
-
   async csvInputChange(fileInputEvent: any) {
-    this.selectedFile = fileInputEvent.target.files[0];
+    const file: File = fileInputEvent.target.files[0];
+
+    this.selectedFile = file;
     this.hasFile = true;
 
-    const file: File = fileInputEvent.target.files[0];
     if (file) {
       try {
         this.ticketText = await this.pdfConversionService.convertToText(file);
+        this.selectedFileContent = await this.pdfConversionService.convertToImage(file);
+        
         this.getSetTicketLocation();
         this.getSetTicketMovie();
         this.getSetTicketDateTime();
@@ -100,11 +100,19 @@ export class ReservationInsertComponent implements OnInit {
   }
 
   onSave(): void {
-    console.log(
-      'submitted form',
-      this.reservationForm.value,
-      this.reservationForm.invalid
-    );
+    if(this.reservationForm.invalid) return;
+
+    const formValues = this.reservationForm.value;
+
+    const newReservation: Reservation = {
+      movieTitle: formValues.movie || '',
+      location: formValues.location || '',
+      dateTime: Timestamp.fromDate(this.dateTime || new Date()),
+      fileContent: this.selectedFileContent,
+      uid: this.sharedService.getUserId(),
+    };
+
+    this.reservationsService.createReservationInFirestore(newReservation);
   }
 
   getSetTicketLocation(): void {
@@ -147,13 +155,20 @@ export class ReservationInsertComponent implements OnInit {
     );
 
     if (ticketDateTime == '') return;
+
     const ticketDate: string = ticketDateTime.split(' ')[0].trim();
     const ticketTime: string = ticketDateTime.split(' ')[1].trim();
-    console.log(
-      new Date(ticketDate).getFullYear(),
-      new Date(ticketDate).getDate(),
-      new Date(ticketDate).getMonth() + 1
-    );
+    
+    const hours = ticketTime.split(':')[0];
+    const minutes = ticketTime.split(':')[1];
+    const dateTime = moment(ticketDate)
+      .add(hours, 'hours')
+      .add(minutes, 'minutes');
+
+    this.formatDate = moment(ticketDate).format('DD/MM/YYYY');
+    this.time =   ticketTime;
+    this.formatDateTime =  moment(dateTime).format('DD/MM/YYYY HH:mm');
+    this.dateTime = new Date(this.formatDateTime);
 
     this.reservationForm.patchValue({
       date: new Date(

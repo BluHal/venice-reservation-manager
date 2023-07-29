@@ -1,7 +1,10 @@
+import { Timestamp } from "@angular/fire/firestore";
+
 export interface Reservation {
   movieTitle: string;
-  date: string;
+  dateTime?: Timestamp;
   location: string;
-  fileId?: string;
-  id: string;
+  fileContent: string;
+  id?: string;
+  uid: string;
 }

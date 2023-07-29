@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -9,12 +9,13 @@ import {
   animate,
 } from '@angular/animations';
 
-import { MatCardModule } from '@angular/material/card';
+import { MatCard, MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Reservation } from './reservation.interface';
 import { ReservationsService } from '../reservations.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-reservation-card',
@@ -31,15 +32,23 @@ import { ReservationsService } from '../reservations.service';
     ]),
   ],
 })
-export class ReservationCardComponent {
+export class ReservationCardComponent implements OnInit {
   @Input() reservation!: Reservation;
 
   public currentState = 'original';
+  public delBtnZIndex: string = '-1';
+  public date: string = '';
+  public showImg: boolean = false;
+
   private swipeCoord!: [number, number];
   private swipeTime!: number;
-  public delBtnZIndex: string = '-1';
+
 
   constructor(private reservationsService: ReservationsService) {}
+
+  ngOnInit() {
+    this.date = moment(this.reservation.dateTime?.toDate()).format('DD/MM/YYYY HH:mm');
+  }
 
   swipeCardLeft(): void {
     if (this.currentState !== 'original') return;
@@ -64,10 +73,13 @@ export class ReservationCardComponent {
   }
 
   deleteItem(): void {
-    this.reservationsService.deleteReservation(this.reservation.id);
+    // this.reservationsService.deleteReservation(this.reservation.id || '');
+    this.reservationsService.deleteReservationInFirestore(this.reservation.id || '');
   }
 
-  showTicket(): void {}
+  showTicket(): void {
+    this.showImg = true
+  }
 
   swipe(e: TouchEvent, when: string): void {
     const coord: [number, number] = [

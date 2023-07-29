@@ -23,40 +23,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss'],
 })
-export class ReservationsComponent implements OnInit {
+export class ReservationsComponent {
   public reservations$ = new BehaviorSubject<Reservation[] | null>(null);
-
-  private reservations: Reservation[] = [
-    {
-      movieTitle: 'The godfather',
-      date: '30/08/2023 15:00',
-      location: 'Sala Grande',
-      id: '04470c11-f0c2-4b62-a33e-553ebe32f318',
-    },
-    {
-      movieTitle: 'The Lord of the Rings',
-      date: '30/08/2023 20:00',
-      location: 'Palabiennale',
-      id: 'f37b606a-ed8f-4617-bd07-bfd14a3603bc',
-    },
-    {
-      movieTitle: 'Dune part two',
-      date: '30/08/2023 09:00',
-      location: 'Sala Grande',
-      id: 'f37b606a-ed8f-4617-bd07-bfd14a3603bc',
-    },
-    {
-      movieTitle: 'The godfather',
-      date: '30/08/2023 15:00',
-      location: 'Palabiennale',
-      id: 'f37b606a-ed8f-4617-bd07-bfd14a3603bc',
-    },
-  ];
-
-  constructor(private reservationService: ReservationsService) {}
-
-  ngOnInit() {
-    this.reservationService.setReservations(this.reservations);
-    this.reservations$.next(this.reservationService.getReservations());
+  
+  constructor(public reservationService: ReservationsService) {
+    this.reservationService.readReservationsFromFirestore();
   }
 }

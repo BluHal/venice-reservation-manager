@@ -1,4 +1,4 @@
-<div *ngFor="let reservation of reservations$ | async">
+<div *ngFor="let reservation of this.reservationService.reservations$ | async">
   <app-reservation-card [reservation]="reservation"></app-reservation-card>
 </div>
 
