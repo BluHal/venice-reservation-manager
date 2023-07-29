@@ -43,11 +43,12 @@ export class ReservationCardComponent implements OnInit {
   private swipeCoord!: [number, number];
   private swipeTime!: number;
 
-
   constructor(private reservationsService: ReservationsService) {}
 
   ngOnInit() {
-    this.date = moment(this.reservation.dateTime?.toDate()).format('DD/MM/YYYY HH:mm');
+    this.date = moment(this.reservation.dateTime?.toDate()).format(
+      'DD/MM/YYYY HH:mm'
+    );
   }
 
   swipeCardLeft(): void {
@@ -74,11 +75,15 @@ export class ReservationCardComponent implements OnInit {
 
   deleteItem(): void {
     // this.reservationsService.deleteReservation(this.reservation.id || '');
-    this.reservationsService.deleteReservationInFirestore(this.reservation.id || '');
+    this.reservationsService.deleteReservationInFirestore(
+      this.reservation.id || ''
+    );
   }
 
   showTicket(): void {
-    this.showImg = true
+    if (this.currentState == 'left') return;
+
+    this.showImg = true;
   }
 
   swipe(e: TouchEvent, when: string): void {

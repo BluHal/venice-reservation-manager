@@ -42,6 +42,7 @@
   height: 100%;
   width: 100%;
   top: 0;
+  z-index: 1000;
 }
 
 .close-button-container {
@@ -49,7 +50,7 @@
   right: 0;
   top: 0;
   padding: 10px 10px 10px 0;
-  z-index: 1000;
+  z-index: 1500;
 }
 
 .close-btn {
