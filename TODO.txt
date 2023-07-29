@@ -1,5 +1,3 @@
-change how the reservations are received by quering directly to the database
-
 when getting the reservations do not get the file content but read it only when the user click on the row
 
 handle row click to hide the plus button

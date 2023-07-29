@@ -22,19 +22,18 @@ export class AuthService {
     return this.AuthLogin(new GoogleAuthProvider());
   }
   // Auth logic to run auth providers
-  AuthLogin(provider: GoogleAuthProvider) {
+  async AuthLogin(provider: GoogleAuthProvider) {
     this.sharedService.activateSpinner();
-    return signInWithPopup(this.auth, provider)
-      .then((result) => {
-        this.SetUserData(result.user);
-        this.router.navigateByUrl('/').then(() => {
-          this.sharedService.disableSpinner();
-        });       
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      const result_1 = await signInWithPopup(this.auth, provider);
+      this.SetUserData(result_1.user);
+      this.router.navigateByUrl('/home').then(() => {
         this.sharedService.disableSpinner();
       });
+    } catch (error) {
+      console.error(error);
+      this.sharedService.disableSpinner();
+    }
   }
 
   SetUserData(userData: User) {

@@ -25,10 +25,15 @@ export class ReservationsService {
   constructor(private sharedService: SharedService) {}
 
   public reservations$?: Observable<Reservation[]>;
+  public reservationFile$?: Observable<string>;
 
   private firestore: Firestore = inject(Firestore);
   private reservations = new BehaviorSubject<Reservation[] | null>(null);
   private reservationsCollection = collection(this.firestore, 'reservations');
+  private reservationFileCollection = collection(
+    this.firestore,
+    'reservation_files'
+  );
 
   public getReservations(): Reservation[] | null {
     return this.reservations.value;
@@ -61,15 +66,6 @@ export class ReservationsService {
         idField: 'id',
       }) as Observable<Reservation[]>;
       this.reservations$ = this.reservations$.pipe(
-        // map((res) => {
-        //   const reservations = res
-        //     .sort(
-        //       (a, b) => (a.dateTime?.seconds || 0) - (b.dateTime?.seconds || 0)
-        //     )
-        //     .filter((res) => res.uid === this.sharedService.getUserId());
-        //   this.sharedService.disableSpinner();
-        //   return reservations;
-        // }),
         tap((res) => console.log(res))
       );
       this.sharedService.disableSpinner();
@@ -79,10 +75,51 @@ export class ReservationsService {
     }
   }
 
+  public readReservationFileFromFirestore(reservationId: string): void {
+    this.sharedService.activateSpinner();
+    const q = query(
+      this.reservationFileCollection,
+      where('reservationId', '==', reservationId)
+    );
+
+    try {
+      this.reservationFile$ = collectionData(q, {
+        idField: 'id',
+      }).pipe(map((res) => res[0]['fileContent'])) as Observable<string>;
+      this.sharedService.disableSpinner();
+    } catch (error) {
+      console.error('READ FILE ERROR', error);
+      this.sharedService.disableSpinner();
+    }
+  }
+
   public createReservationInFirestore(reservation: Reservation): void {
     if (!reservation) return;
 
+    const reservationFileContent = reservation.fileContent;
+
+    reservation.fileContent = '';
+
     addDoc(this.reservationsCollection, reservation).then(
+      (documentReference: DocumentReference) => {
+        this.createReservationFileInFirestore(
+          reservationFileContent,
+          documentReference.id
+        );
+      }
+    );
+  }
+
+  public createReservationFileInFirestore(
+    fileContent: string,
+    reservationId: string
+  ): void {
+    const reservationFile = {
+      fileContent: fileContent,
+      reservationId: reservationId,
+    };
+
+    addDoc(this.reservationFileCollection, reservationFile).then(
       (documentReference: DocumentReference) => {
         console.log(documentReference);
       }

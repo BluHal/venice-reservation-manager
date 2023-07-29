@@ -39,11 +39,12 @@ export class ReservationCardComponent implements OnInit {
   public delBtnZIndex: string = '-1';
   public date: string = '';
   public showImg: boolean = false;
+  public fileContent: string = '';
 
   private swipeCoord!: [number, number];
   private swipeTime!: number;
 
-  constructor(private reservationsService: ReservationsService) {}
+  constructor(public reservationsService: ReservationsService) {}
 
   ngOnInit() {
     this.date = moment(this.reservation.dateTime?.toDate()).format(
@@ -81,9 +82,15 @@ export class ReservationCardComponent implements OnInit {
   }
 
   showTicket(): void {
-    if (this.currentState == 'left') return;
+    this.reservationsService.readReservationFileFromFirestore(
+      this.reservation.id || ''
+    );
+    this.reservationsService.reservationFile$?.subscribe((res) => {
+      this.fileContent = res;
+      this.showImg = true;
+    });
 
-    this.showImg = true;
+    if (this.currentState == 'left') return;
   }
 
   swipe(e: TouchEvent, when: string): void {

@@ -23,7 +23,7 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit() {
     if (this.sharedService.checkUserData()) {
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl('/home');
       return;
     }
   }
