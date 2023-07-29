@@ -11,6 +11,10 @@ import {
   collectionData,
   deleteDoc,
   doc,
+  getDocs,
+  orderBy,
+  query,
+  where,
 } from '@angular/fire/firestore';
 import { SharedService } from '../shared/shared.service';
 
@@ -46,25 +50,31 @@ export class ReservationsService {
   public readReservationsFromFirestore(): void {
     this.sharedService.activateSpinner();
 
+    const q = query(
+      this.reservationsCollection,
+      where('uid', '==', this.sharedService.getUserId()),
+      orderBy('dateTime', 'asc')
+    );
+
     try {
-      this.reservations$ = collectionData(this.reservationsCollection, {
+      this.reservations$ = collectionData(q, {
         idField: 'id',
       }) as Observable<Reservation[]>;
       this.reservations$ = this.reservations$.pipe(
-        map((res) => {
-          const reservations = res
-            .sort(
-              (a, b) => (a.dateTime?.seconds || 0) - (b.dateTime?.seconds || 0)
-            )
-            .filter((res) => res.uid === this.sharedService.getUserId());
-          this.sharedService.disableSpinner();
-          return reservations;
-        }),
+        // map((res) => {
+        //   const reservations = res
+        //     .sort(
+        //       (a, b) => (a.dateTime?.seconds || 0) - (b.dateTime?.seconds || 0)
+        //     )
+        //     .filter((res) => res.uid === this.sharedService.getUserId());
+        //   this.sharedService.disableSpinner();
+        //   return reservations;
+        // }),
         tap((res) => console.log(res))
       );
+      this.sharedService.disableSpinner();
     } catch (error) {
       console.error('READ ERROR', error);
-
       this.sharedService.disableSpinner();
     }
   }
