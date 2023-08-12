@@ -1,14 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Reservation } from './reservation-card/reservation.interface';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import {
+  CollectionReference,
+  DocumentReference,
+  Firestore,
+  Query,
+  Timestamp,
+  addDoc,
+  collection,
+  collectionData,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from '@angular/fire/firestore';
+import { SharedService } from '../shared/shared.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReservationsService {
-  constructor() {}
+  constructor(private sharedService: SharedService) {}
 
+  public reservations$?: Observable<Reservation[]>;
+  public reservationFile$?: Observable<string>;
+  public selectedDateRange$ = new BehaviorSubject<Date[]>([
+    new Date(),
+    new Date(),
+  ]);
+
+  private firestore: Firestore = inject(Firestore);
   private reservations = new BehaviorSubject<Reservation[] | null>(null);
+  private reservationsCollection = collection(this.firestore, 'reservations');
+  private reservationFileCollection = collection(
+    this.firestore,
+    'reservation_files'
+  );
 
   public getReservations(): Reservation[] | null {
     return this.reservations.value;
@@ -25,5 +55,87 @@ export class ReservationsService {
 
     if (index != undefined && index > -1)
       this.reservations.value?.splice(index, 1);
+  }
+
+  public readReservationsFromFirestore(): void {
+    this.sharedService.activateSpinner();
+
+    const startDate = Timestamp.fromDate(this.selectedDateRange$.value[0]);
+    var endDate = new Date(this.selectedDateRange$.value[1]);
+    endDate.setDate(endDate.getDate() + 1);
+    const endDateTimeStamp = Timestamp.fromDate(endDate);
+
+    const q = query(
+      this.reservationsCollection,
+      where('uid', '==', this.sharedService.getUserId()),
+      where('dateTime', '>=', startDate),
+      where('dateTime', '<', endDateTimeStamp),
+      orderBy('dateTime', 'asc')
+    );
+
+    try {
+      this.reservations$ = collectionData(q, {
+        idField: 'id',
+      }) as Observable<Reservation[]>;
+      this.sharedService.disableSpinner();
+    } catch (error) {
+      console.error('READ ERROR', error);
+      this.sharedService.disableSpinner();
+    }
+  }
+
+  public readReservationFileFromFirestore(reservationId: string): void {
+    this.sharedService.activateSpinner();
+    const q = query(
+      this.reservationFileCollection,
+      where('reservationId', '==', reservationId)
+    );
+
+    try {
+      this.reservationFile$ = collectionData(q, {
+        idField: 'id',
+      }).pipe(map((res) => res[0]['fileContent'])) as Observable<string>;
+      this.sharedService.disableSpinner();
+    } catch (error) {
+      console.error('READ FILE ERROR', error);
+      this.sharedService.disableSpinner();
+    }
+  }
+
+  public createReservationInFirestore(reservation: Reservation): void {
+    if (!reservation) return;
+
+    const reservationFileContent = reservation.fileContent;
+
+    reservation.fileContent = '';
+
+    addDoc(this.reservationsCollection, reservation).then(
+      (documentReference: DocumentReference) => {
+        this.createReservationFileInFirestore(
+          reservationFileContent,
+          documentReference.id
+        );
+      }
+    );
+  }
+
+  public createReservationFileInFirestore(
+    fileContent: string,
+    reservationId: string
+  ): void {
+    const reservationFile = {
+      fileContent: fileContent,
+      reservationId: reservationId,
+    };
+
+    addDoc(this.reservationFileCollection, reservationFile).then(
+      (documentReference: DocumentReference) => {
+        //console.log(documentReference);
+      }
+    );
+  }
+
+  public deleteReservationInFirestore(reservationId: string): void {
+    deleteDoc(doc(this.firestore, `reservations/${reservationId}`));
   }
 }

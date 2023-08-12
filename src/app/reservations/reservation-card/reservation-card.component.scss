@@ -2,13 +2,14 @@
 
 .card-container {
   display: flex;
+  background-color: #f9f9f9;
 }
 
 .card {
   margin-top: -1px;
-  border-top: 1px solid v.$red !important;
-  padding: 10px;
+  padding: 0 10px 0 10px;
   height: 100px;
+  border-top: 1px solid v.$red !important;
 }
 
 .card-content {
@@ -35,4 +36,25 @@
   background-color: v.$red;
   color: white;
   box-shadow: none;
+}
+
+.image-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.close-button-container {
+  position: fixed;
+  right: 0;
+  top: 0;
+  padding: 10px 10px 10px 0;
+  z-index: 1500;
+}
+
+.close-btn {
+  background-color: v.$red;
+  scale: 1.2;
 }

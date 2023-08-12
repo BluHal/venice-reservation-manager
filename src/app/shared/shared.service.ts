@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -51,5 +51,17 @@ export class SharedService {
     if (userData) return true;
 
     return false;
+  }
+
+  public getUserId(): string {
+    return  JSON.parse(localStorage.getItem('user')!).uid;
+  }
+
+  public convertFile(file : File) : Observable<string> {
+    const result = new ReplaySubject<string>(1);
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = (event) => result.next(btoa(event.target?.result?.toString() || ''));
+    return result;
   }
 }

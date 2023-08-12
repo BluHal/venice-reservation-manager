@@ -7,6 +7,8 @@ import {
   signInWithPopup,
   User,
 } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { SharedService } from '../shared.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,21 +16,24 @@ import {
 export class AuthService {
   private auth: Auth = inject(Auth);
 
-  constructor() {}
+  constructor(private router: Router, private sharedService: SharedService) {}
   // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new GoogleAuthProvider());
   }
   // Auth logic to run auth providers
-  AuthLogin(provider: GoogleAuthProvider) {
-    return signInWithPopup(this.auth, provider)
-      .then((result) => {
-        this.SetUserData(result.user);
-        console.log('You have been successfully logged in!');
-      })
-      .catch((error) => {
-        console.log(error);
+  async AuthLogin(provider: GoogleAuthProvider) {
+    this.sharedService.activateSpinner();
+    try {
+      const result_1 = await signInWithPopup(this.auth, provider);
+      this.SetUserData(result_1.user);
+      this.router.navigateByUrl('/home').then(() => {
+        this.sharedService.disableSpinner();
       });
+    } catch (error) {
+      console.error(error);
+      this.sharedService.disableSpinner();
+    }
   }
 
   SetUserData(userData: User) {

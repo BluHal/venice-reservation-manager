@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 
 export const routes: Route[] = [
   {
-    path: '',
+    path: 'home',
     loadComponent: () =>
       import('./reservations/reservations.component').then(
         (mod) => mod.ReservationsComponent
@@ -21,5 +21,14 @@ export const routes: Route[] = [
       import('./login-page/login-page.component').then(
         (mod) => mod.LoginPageComponent
       ),
+  },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
   },
 ];
