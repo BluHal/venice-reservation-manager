@@ -6,6 +6,7 @@ import {
   DocumentReference,
   Firestore,
   Query,
+  Timestamp,
   addDoc,
   collection,
   collectionData,
@@ -26,6 +27,10 @@ export class ReservationsService {
 
   public reservations$?: Observable<Reservation[]>;
   public reservationFile$?: Observable<string>;
+  public selectedDateRange$ = new BehaviorSubject<Date[]>([
+    new Date(),
+    new Date(),
+  ]);
 
   private firestore: Firestore = inject(Firestore);
   private reservations = new BehaviorSubject<Reservation[] | null>(null);
@@ -55,9 +60,16 @@ export class ReservationsService {
   public readReservationsFromFirestore(): void {
     this.sharedService.activateSpinner();
 
+    const startDate = Timestamp.fromDate(this.selectedDateRange$.value[0]);
+    var endDate = new Date(this.selectedDateRange$.value[1]);
+    endDate.setDate(endDate.getDate() + 1);
+    const endDateTimeStamp = Timestamp.fromDate(endDate);
+
     const q = query(
       this.reservationsCollection,
       where('uid', '==', this.sharedService.getUserId()),
+      where('dateTime', '>=', startDate),
+      where('dateTime', '<', endDateTimeStamp),
       orderBy('dateTime', 'asc')
     );
 
@@ -65,9 +77,6 @@ export class ReservationsService {
       this.reservations$ = collectionData(q, {
         idField: 'id',
       }) as Observable<Reservation[]>;
-      this.reservations$ = this.reservations$.pipe(
-        tap((res) => console.log(res))
-      );
       this.sharedService.disableSpinner();
     } catch (error) {
       console.error('READ ERROR', error);
@@ -121,7 +130,7 @@ export class ReservationsService {
 
     addDoc(this.reservationFileCollection, reservationFile).then(
       (documentReference: DocumentReference) => {
-        console.log(documentReference);
+        //console.log(documentReference);
       }
     );
   }

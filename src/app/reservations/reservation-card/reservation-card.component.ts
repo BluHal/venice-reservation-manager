@@ -82,6 +82,7 @@ export class ReservationCardComponent implements OnInit {
   }
 
   showTicket(): void {
+    this.currentState = 'original';
     this.reservationsService.readReservationFileFromFirestore(
       this.reservation.id || ''
     );

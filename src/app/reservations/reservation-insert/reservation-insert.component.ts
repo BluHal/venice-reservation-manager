@@ -134,11 +134,22 @@ export class ReservationInsertComponent implements OnInit {
   }
 
   getSetTicketLocation(): void {
-    const location = this.ticketText
-      .substring(0, this.ticketText.indexOf('-'))
-      .trimEnd()
-      .trimStart();
-    console.log(location);
+    const isLido =
+      this.ticketText.toLocaleLowerCase().indexOf('lido di venezia') != -1;
+
+    var location = '';
+
+    if (isLido) {
+      location = this.ticketText
+        .substring(
+          this.ticketText.indexOf('7 3 4 1 6') + 9,
+          this.ticketText.indexOf(' -')
+        )
+        .trimEnd()
+        .trimStart();
+    } else {
+      location = 'VENICE IMMERSIVE';
+    }
 
     this.reservationForm.patchValue({
       location,
@@ -146,11 +157,18 @@ export class ReservationInsertComponent implements OnInit {
   }
 
   getSetTicketMovie(): void {
+    const isLido =
+      this.ticketText.toLocaleLowerCase().indexOf('lido di venezia') != -1;
+    var startIndex;
+
+    if (isLido)
+      startIndex =
+        this.ticketText.toLocaleLowerCase().indexOf('lido di venezia') + 15;
+    else
+      startIndex = this.ticketText.toLocaleLowerCase().indexOf('- venezia') + 9;
+
     const ticketCleaned = this.ticketText
-      .substring(
-        this.ticketText.indexOf('Venezia') + 7,
-        this.ticketText.length - 1
-      )
+      .substring(startIndex, this.ticketText.length - 1)
       .trimStart();
     const reservationDate = this.sharedService
       .getDateTimeFromString(this.ticketText)
@@ -160,7 +178,6 @@ export class ReservationInsertComponent implements OnInit {
     const movieTitle = ticketCleaned
       .substring(0, ticketCleaned.indexOf(reservationDate))
       .trimEnd();
-    console.log(movieTitle);
 
     this.reservationForm.patchValue({
       movie: movieTitle,

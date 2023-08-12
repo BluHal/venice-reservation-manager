@@ -1,8 +1,66 @@
-<div *ngFor="let reservation of this.reservationService.reservations$ | async">
+<mat-card>
+  <div class="date-btn-group">
+    <button
+      class="date-btn date-btn-large"
+      custom-color="true"
+      mat-raised-button
+      (click)="setSelectedDate('prev')"
+    >
+      Precedente
+    </button>
+    <button
+      class="date-btn"
+      mat-raised-button
+      (click)="setSelectedDate('today')"
+    >
+      Oggi
+    </button>
+    <button
+      class="date-btn date-btn-large"
+      custom-color="true"
+      mat-raised-button
+      (click)="setSelectedDate('next')"
+    >
+      Successivo
+    </button>
+  </div>
+  <mat-card-header class="date-header">
+    <mat-card-title>
+      <mat-form-field>
+        <mat-label class="date-header-label">Inserire Data</mat-label>
+        <mat-date-range-input [rangePicker]="picker" [formGroup]="filterDate">
+          <input
+            class="data-header-input"
+            matStartDate
+            placeholder="Data Inizio"
+            formControlName="start"
+          />
+          <input
+            class="data-header-input"
+            matEndDate
+            placeholder="Data Fine"
+            formControlName="end"
+            (dateChange)="onDateChanged()"
+          />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </mat-card-title>
+  </mat-card-header>
+</mat-card>
+
+<div
+  class="reservation-list-container"
+  *ngFor="let reservation of this.reservationService.reservations$ | async"
+>
   <app-reservation-card [reservation]="reservation"></app-reservation-card>
 </div>
 
-<div class="add-button-container">
+<div class="add-btn-container">
   <button
     mat-fab
     color="primary"
