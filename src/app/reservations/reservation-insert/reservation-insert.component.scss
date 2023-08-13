@@ -1,3 +1,5 @@
+@use "../../../utilities/variables" as v;
+
 .form-field {
   width: 100%;
 }
@@ -27,6 +29,7 @@
 
 .file-upload-btn {
   transform: scale(1.5);
+  color: v.$red;
 }
 
 ::ng-deep ngx-material-timepicker-content {

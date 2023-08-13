@@ -1,10 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { Router, RouterModule } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { SharedService } from './shared/shared.service';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
+
+import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { SharedService } from './shared/shared.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,6 +17,7 @@ import { SharedService } from './shared/shared.service';
     NavBarComponent,
     RouterModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
   ],
 })
 export class AppComponent implements OnInit {

@@ -1,4 +1,19 @@
 <mat-toolbar class="nav-bar">
-  <span class="icon-lion" [routerLink]="''"></span>
-  <span class="site-title">La Biennale di Venezia</span>
+  <div class="nav-bar-title">
+    <span class="icon-lion" [routerLink]="''"></span>
+    <span class="site-title">La Biennale di Venezia</span>
+  </div>
+  <button
+    #sidenavBtn
+    class="sidenav-btn"
+    (click)="onSidenavClick()"
+    aria-controls="drawer"
+    attr.aria-expanded="{{ drawer?.opened }}"
+  >
+    <svg class="hamburger" viewBox="0 0 100 100" width="60">
+      <rect class="line top" width="60" height="8" x="20" y="35"></rect>
+      <rect class="line mid" width="60" height="8" x="20" y="55"></rect>
+      <rect class="line bot" width="60" height="8" x="20" y="75"></rect>
+    </svg>
+  </button>
 </mat-toolbar>
