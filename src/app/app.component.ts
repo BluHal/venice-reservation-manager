@@ -7,6 +7,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { SharedService } from './shared/shared.service';
+import { SidenavComponent } from './sidenav/sidenav.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,6 +19,7 @@ import { SharedService } from './shared/shared.service';
     RouterModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    SidenavComponent,
   ],
 })
 export class AppComponent implements OnInit {

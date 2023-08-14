@@ -1,7 +1,7 @@
 <mat-drawer-container class="sidenav-container" [hasBackdrop]="'false'">
   <app-nav-bar [drawer]="drawer"></app-nav-bar>
   <mat-drawer #drawer class="sidenav" [mode]="'over'">
-    <p>Auto-resizing sidenav</p>
+    <app-sidenav></app-sidenav>
   </mat-drawer>
   <div class="spinner-container" *ngIf="showSpinner$ | async">
     <mat-progress-spinner class="spinner" [mode]="'indeterminate'">

@@ -33,24 +33,24 @@
   border: 0;
 
   &[aria-expanded="true"] .top {
-    y: 48;
+    y: 46;
     rotate: 45deg;
   }
   &[aria-expanded="true"] .mid {
     opacity: 0;
   }
   &[aria-expanded="true"] .bot {
-    y: 48;
+    y: 46;
     rotate: -45deg;
   }
 
   .line {
     fill: white;
-    transition: y 300ms ease-in 300ms, rotate 300ms ease-in, opacity 0ms 300ms;
+    transition: y 200ms ease-in 200ms, rotate 200ms ease-in, opacity 0ms 200ms;
     transform-origin: center;
   }
 
   &[aria-expanded="true"] .line {
-    transition: y 300ms ease-in, rotate 300ms ease-in 300ms, opacity 0ms 300ms;
+    transition: y 200ms ease-in, rotate 200ms ease-in 200ms, opacity 0ms 200ms;
   }
 }
