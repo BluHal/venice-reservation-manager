@@ -1,3 +1,10 @@
+$bar-width: 35px;
+$bar-height: 5px;
+$hamburger-gap: 5px;
+$animation-timing: 200ms ease-in-out;
+$hamburger-height: calc($bar-height * 3 + $hamburger-gap * 2);
+$x-width: calc($hamburger-height * 1.41421356237);
+
 .icon-lion {
   font-size: 50px !important;
   color: white !important;
@@ -32,25 +39,38 @@
   padding: 0;
   border: 0;
 
-  &[aria-expanded="true"] .top {
-    y: 46;
-    rotate: 45deg;
-  }
-  &[aria-expanded="true"] .mid {
+  &[aria-expanded="true"] span {
     opacity: 0;
   }
-  &[aria-expanded="true"] .bot {
-    y: 46;
+
+  &[aria-expanded="true"] .hamburger-menu::before {
+    rotate: 45deg;
+    width: $x-width;
+    transform: translateY(calc($bar-height / -2));
+  }
+
+  &[aria-expanded="true"] .hamburger-menu::after {
     rotate: -45deg;
+    width: $x-width;
+    transform: translateY(calc($bar-height / 2));
   }
+}
 
-  .line {
-    fill: white;
-    transition: y 200ms ease-in 200ms, rotate 200ms ease-in, opacity 0ms 200ms;
-    transform-origin: center;
-  }
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  gap: $hamburger-gap;
+  width: max-content;
 
-  &[aria-expanded="true"] .line {
-    transition: y 200ms ease-in, rotate 200ms ease-in 200ms, opacity 0ms 200ms;
+  &::before,
+  &::after,
+  & span {
+    content: "";
+    width: $bar-width;
+    height: $bar-height;
+    background-color: white;
+    transform-origin: left center;
+    transition: opacity $animation-timing 200ms, width $animation-timing,
+      transform $animation-timing, rotate $animation-timing 200ms;
   }
 }

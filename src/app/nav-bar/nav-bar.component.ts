@@ -25,6 +25,5 @@ export class NavBarComponent {
 
   onSidenavClick(): void {
     this.drawer?.toggle();
-    console.log(this.drawer?.opened);
   }
 }
