@@ -45,14 +45,26 @@ $x-width: calc($hamburger-height * 1.41421356237);
 
   &[aria-expanded="true"] .hamburger-menu::before {
     rotate: 45deg;
-    width: $x-width;
-    transform: translateY(calc($bar-height / -2));
+    transform: translateY(calc(($bar-height + 3px) / -2));
   }
 
   &[aria-expanded="true"] .hamburger-menu::after {
     rotate: -45deg;
-    width: $x-width;
     transform: translateY(calc($bar-height / 2));
+  }
+
+  .hamburger-menu::before,
+  .hamburger-menu::after,
+  span {
+    transition: opacity $animation-timing 200ms, width $animation-timing,
+      transform $animation-timing, rotate $animation-timing;
+  }
+
+  &[aria-expanded="true"] .hamburger-menu::before,
+  &[aria-expanded="true"] .hamburger-menu::after,
+  &[aria-expanded="true"] span {
+    transition: opacity $animation-timing 200ms, width $animation-timing,
+      transform $animation-timing, rotate $animation-timing 200ms;
   }
 }
 
@@ -70,7 +82,5 @@ $x-width: calc($hamburger-height * 1.41421356237);
     height: $bar-height;
     background-color: white;
     transform-origin: left center;
-    transition: opacity $animation-timing 200ms, width $animation-timing,
-      transform $animation-timing, rotate $animation-timing 200ms;
   }
 }
