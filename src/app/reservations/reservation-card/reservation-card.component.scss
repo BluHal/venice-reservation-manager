@@ -9,7 +9,7 @@
   margin-top: -1px;
   padding: 0 10px 0 10px;
   height: 100px;
-  border-top: 1px solid v.$red !important;
+  border-top: 1px solid v.$clr-primary !important;
 }
 
 .card-content {
@@ -17,7 +17,7 @@
 }
 
 .card-buttons {
-  background-color: v.$red !important;
+  background-color: v.$clr-primary !important;
   position: absolute;
   right: 0;
   height: 100px;
@@ -33,7 +33,7 @@
 }
 
 .delete-btn {
-  background-color: v.$red;
+  background-color: v.$clr-primary;
   color: white;
   box-shadow: none;
 }
@@ -55,6 +55,6 @@
 }
 
 .close-btn {
-  background-color: v.$red;
+  background-color: v.$clr-primary;
   scale: 1.2;
 }

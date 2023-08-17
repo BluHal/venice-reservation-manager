@@ -5,7 +5,7 @@
 }
 
 .save-btn {
-  background-color: v.$red;
+  background-color: v.$clr-primary;
   &-container {
     position: fixed;
     right: 0;
@@ -32,7 +32,7 @@
 
 .file-upload-btn {
   transform: scale(1.5);
-  color: v.$red;
+  color: v.$clr-primary;
 }
 
 ::ng-deep ngx-material-timepicker-content {

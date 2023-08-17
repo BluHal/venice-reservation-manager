@@ -1,9 +1,13 @@
+@use "./utilities/variables" as v;
+
 html,
 body {
   height: 100%;
-  background-color: #f9f9f9;
+  color-scheme: light dark;
 }
 body {
   margin: 0;
   font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  color: v.$clr-text;
+  background-color: v.$clr-surface !important;
 }
