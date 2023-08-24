@@ -196,20 +196,28 @@ export class ReservationInsertComponent implements OnInit {
 
     const hours = ticketTime.split(':')[0];
     const minutes = ticketTime.split(':')[1];
-    const dateTime = moment(ticketDate)
+    const dateTime = moment(ticketDate, 'DD-MM-YYYY')
       .add(hours, 'hours')
       .add(minutes, 'minutes');
 
-    this.formatDate = moment(ticketDate).format('DD/MM/YYYY');
+    this.formatDate = moment(ticketDate, 'DD-MM-YYYY').format('DD/MM/YYYY');
     this.time = ticketTime;
     this.formatDateTime = moment(dateTime).format('DD/MM/YYYY HH:mm');
-    this.dateTime = new Date(this.formatDateTime);
+    this.dateTime = new Date(
+      moment(dateTime).year(),
+      moment(dateTime).month(),
+      moment(dateTime).date()
+    );
+
+    console.log(moment(dateTime).year());
+    console.log(moment(dateTime).date());
+    console.log(moment(dateTime).month());
 
     this.reservationForm.patchValue({
       date: new Date(
-        new Date(ticketDate).getFullYear(),
-        new Date(ticketDate).getDate() - 1,
-        new Date(ticketDate).getMonth() + 1
+        moment(dateTime).year(),
+        moment(dateTime).month(),
+        moment(dateTime).date()
       ),
       time: ticketTime,
     });
