@@ -1,5 +1,9 @@
 @use "./utilities/variables" as v;
 
+* {
+  touch-action: manipulation;
+}
+
 html,
 body {
   height: 100%;
