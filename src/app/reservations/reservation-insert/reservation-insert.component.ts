@@ -206,12 +206,10 @@ export class ReservationInsertComponent implements OnInit {
     this.dateTime = new Date(
       moment(dateTime).year(),
       moment(dateTime).month(),
-      moment(dateTime).date()
+      moment(dateTime).date(),
+      moment(dateTime).hours(),
+      moment(dateTime).minutes(),
     );
-
-    console.log(moment(dateTime).year());
-    console.log(moment(dateTime).date());
-    console.log(moment(dateTime).month());
 
     this.reservationForm.patchValue({
       date: new Date(
