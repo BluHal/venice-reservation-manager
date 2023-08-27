@@ -58,3 +58,13 @@
   background-color: v.$clr-primary;
   scale: 1.2;
 }
+
+.movieTitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+:host ::ng-deep .mat-mdc-card-header-text {
+  width: 100%;
+}

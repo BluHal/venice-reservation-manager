@@ -1,10 +1,10 @@
 <div class="card-container">
-  <mat-card  #reservationCard class="card card-content" (touchstart)="swipe($event, 'start')" (touchend)="swipe($event, 'end')"
-    [@cardAnimator]="currentState" (@cardAnimator.start)="onAnimationStarted()"
+  <mat-card #reservationCard class="card card-content" (touchstart)="swipe($event, 'start')"
+    (touchend)="swipe($event, 'end')" [@cardAnimator]="currentState" (@cardAnimator.start)="onAnimationStarted()"
     (@cardAnimator.done)="onAnimationCompleted()" (click)="showTicket()">
     <mat-card-header class="card-header">
-      <mat-card-title>
-        {{ reservation.movieTitle.length > 30 ? reservation.movieTitle.slice(0, 30) + '...' : reservation.movieTitle }}
+      <mat-card-title class="movieTitle">
+        {{ reservation.movieTitle }}
       </mat-card-title>
       <mat-card-subtitle>{{ reservation.location }}</mat-card-subtitle>
       <mat-card-subtitle>{{ date }} </mat-card-subtitle>
@@ -22,12 +22,7 @@
   <img [src]="fileContent">
 
   <div class="close-button-container">
-    <button
-      mat-fab
-      color="primary"
-      class="close-btn"
-      (click)="showImg = false"
-    >
+    <button mat-fab color="primary" class="close-btn" (click)="showImg = false">
       <mat-icon>close</mat-icon>
     </button>
   </div>
