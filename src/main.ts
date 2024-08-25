@@ -7,12 +7,12 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideDatabase, getDatabase } from '@angular/fire/database';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
-import { environment } from './environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { routes } from './app/routes';
 import { provideRouter } from '@angular/router';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [

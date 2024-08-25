@@ -140,13 +140,11 @@ export class ReservationInsertComponent implements OnInit {
     var location = '';
 
     if (isLido) {
+      const indexOfLido = this.ticketText.indexOf('- Lido di Venezia');
       location = this.ticketText
-        .substring(
-          this.ticketText.indexOf('7 3 4 1 6') + 9,
-          this.ticketText.indexOf(' -')
-        )
-        .trimEnd()
-        .trimStart();
+        .substring(indexOfLido - 20, indexOfLido)
+        .replace(/\d+/g, '')
+        .trim();
     } else {
       location = 'VENICE IMMERSIVE';
     }
@@ -196,21 +194,17 @@ export class ReservationInsertComponent implements OnInit {
 
     const hours = ticketTime.split(':')[0];
     const minutes = ticketTime.split(':')[1];
-    const dateTime = moment(ticketDate)
+    const dateTime = moment(ticketDate, 'DD/MM/YYYY')
       .add(hours, 'hours')
       .add(minutes, 'minutes');
 
-    this.formatDate = moment(ticketDate).format('DD/MM/YYYY');
+    this.formatDate = moment(ticketDate, 'DD/MM/YYYY').format();
     this.time = ticketTime;
-    this.formatDateTime = moment(dateTime).format('DD/MM/YYYY HH:mm');
+    this.formatDateTime = moment(dateTime, 'DD/MM/YYYY HH:mm').format();
     this.dateTime = new Date(this.formatDateTime);
 
     this.reservationForm.patchValue({
-      date: new Date(
-        new Date(ticketDate).getFullYear(),
-        new Date(ticketDate).getDate() - 1,
-        new Date(ticketDate).getMonth() + 1
-      ),
+      date: new Date(dateTime.year(), dateTime.month(), dateTime.date()),
       time: ticketTime,
     });
   }
