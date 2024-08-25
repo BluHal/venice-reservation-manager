@@ -1,1 +1,15 @@
-$red: #df1b3b;
+$clr-primary: hsl(350, 78%, 49%);
+$clr-secondary: hsl(0, 0%, 99%);
+$clr-accent: hsl(170, 10%, 50%);
+$clr-surface: hsl(340, 10%, 94%);
+$clr-text: hsl(348, 10%, 10%);
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    $clr-primary: hsl(350, 78%, 49%);
+    $clr-secondary: hsl(0, 0%, 99%);
+    $clr-accent: hsl(170, 10%, 50%);
+    $clr-surface: hsl(348, 10%, 10%);
+    $clr-text: hsl(340, 10%, 94%);
+  }
+}

@@ -12,7 +12,7 @@ import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { routes } from './app/routes';
 import { provideRouter } from '@angular/router';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { environment } from './environments/environment';
+import { provideHttpClient } from '@angular/common/http';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -27,5 +27,6 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideRouter(routes),
     { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
+    provideHttpClient(),
   ],
 }).catch((err) => console.error(err));

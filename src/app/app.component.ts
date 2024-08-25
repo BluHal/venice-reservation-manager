@@ -1,10 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { Router, RouterModule } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { SharedService } from './shared/shared.service';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
+
+import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { SharedService } from './shared/shared.service';
+import { SidenavComponent } from './sidenav/sidenav.component';
+import { ProgrammeService } from './shared/services/programme.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,6 +19,8 @@ import { SharedService } from './shared/shared.service';
     NavBarComponent,
     RouterModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
+    SidenavComponent,
   ],
 })
 export class AppComponent implements OnInit {
@@ -22,12 +28,26 @@ export class AppComponent implements OnInit {
 
   public showSpinner$ = this.sharedService.showSpinner$;
 
-  constructor(private sharedService: SharedService, private router: Router) {}
+  constructor(
+    private sharedService: SharedService,
+    private router: Router,
+    private programmeService: ProgrammeService
+  ) {}
 
   ngOnInit() {
     this.showSpinner$.next(this.sharedService.getSpinnerStatus());
     if (!this.sharedService.checkUserData()) {
       this.router.navigateByUrl('/log-in');
     }
+  }
+
+  testGetProgramme(): void {
+    this.programmeService
+      .getProgrammeByDate('2023-08-30')
+      .subscribe((res: any) => {
+        console.log(res);
+        const htmlString = res[1].data;
+        this.programmeService.getEventsList(htmlString);
+      });
   }
 }

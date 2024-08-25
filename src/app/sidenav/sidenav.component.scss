@@ -1,0 +1,40 @@
+@use "../../utilities/variables" as v;
+
+.sidenav {
+  &-menu {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-item {
+    background-color: v.$clr-primary;
+    border-top: 1px solid white;
+    height: 7.3rem;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      color: white;
+    }
+
+    a::after {
+      font-family: "Biennale" !important;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: "\e905";
+      font-weight: bold;
+      vertical-align: middle;
+      margin-left: 12px;
+    }
+  }
+}

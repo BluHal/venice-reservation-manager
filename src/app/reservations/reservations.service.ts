@@ -136,6 +136,25 @@ export class ReservationsService {
   }
 
   public deleteReservationInFirestore(reservationId: string): void {
-    deleteDoc(doc(this.firestore, `reservations/${reservationId}`));
+    const q = query(
+      this.reservationFileCollection,
+      where('reservationId', '==', reservationId)
+    );
+
+    getDocs(q).then((qDocs: any) => {
+      try {
+        const fileContentDocId = qDocs.docs[0].id;
+        deleteDoc(
+          doc(this.firestore, `/reservation_files/${fileContentDocId}`)
+        );
+      } catch (error) {
+        console.error('DELETE FILE ERROR', error);
+      }
+      try {
+        deleteDoc(doc(this.firestore, `reservations/${reservationId}`));
+      } catch (error) {
+        console.error('DELETE RESERVATION ERROR', error);
+      }
+    });
   }
 }

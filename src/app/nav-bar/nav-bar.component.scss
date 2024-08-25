@@ -1,3 +1,10 @@
+$bar-width: 35px;
+$bar-height: 5px;
+$hamburger-gap: 5px;
+$animation-timing: 200ms ease-in-out;
+$hamburger-height: calc($bar-height * 3 + $hamburger-gap * 2);
+$x-width: calc($hamburger-height * 1.41421356237);
+
 .icon-lion {
   font-size: 50px !important;
   color: white !important;
@@ -6,7 +13,16 @@
 }
 
 .nav-bar {
+  height: 6%;
   background-color: #df1b3b;
+  display: flex;
+  justify-content: space-between;
+
+  &-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .site-title {
@@ -15,4 +31,56 @@
   text-transform: uppercase;
   font-size: 12px;
   margin-left: 15px;
+}
+
+.sidenav-btn {
+  color: white;
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+
+  &[aria-expanded="true"] span {
+    opacity: 0;
+  }
+
+  &[aria-expanded="true"] .hamburger-menu::before {
+    rotate: 45deg;
+    transform: translateY(calc(($bar-height + 3px) / -2));
+  }
+
+  &[aria-expanded="true"] .hamburger-menu::after {
+    rotate: -45deg;
+    transform: translateY(calc($bar-height / 2));
+  }
+
+  .hamburger-menu::before,
+  .hamburger-menu::after,
+  span {
+    transition: opacity $animation-timing 200ms, width $animation-timing,
+      transform $animation-timing, rotate $animation-timing;
+  }
+
+  &[aria-expanded="true"] .hamburger-menu::before,
+  &[aria-expanded="true"] .hamburger-menu::after,
+  &[aria-expanded="true"] span {
+    transition: opacity $animation-timing 200ms, width $animation-timing,
+      transform $animation-timing, rotate $animation-timing 200ms;
+  }
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  gap: $hamburger-gap;
+  width: max-content;
+
+  &::before,
+  &::after,
+  & span {
+    content: "";
+    width: $bar-width;
+    height: $bar-height;
+    background-color: white;
+    transform-origin: left center;
+  }
 }

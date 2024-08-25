@@ -1,4 +1,17 @@
 <mat-toolbar class="nav-bar">
-  <span class="icon-lion" [routerLink]="''"></span>
-  <span class="site-title">La Biennale di Venezia</span>
+  <div class="nav-bar-title">
+    <span class="icon-lion" [routerLink]="''"></span>
+    <span class="site-title">La Biennale di Venezia</span>
+  </div>
+  <button
+    #sidenavBtn
+    class="sidenav-btn"
+    (click)="onSidenavClick()"
+    aria-controls="drawer"
+    attr.aria-expanded="{{ drawer?.opened }}"
+  >
+    <label class="hamburger-menu">
+      <span></span>
+    </label>
+  </button>
 </mat-toolbar>
