@@ -1,11 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Reservation } from './reservation-card/reservation.interface';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import {
-  CollectionReference,
   DocumentReference,
   Firestore,
-  Query,
   Timestamp,
   addDoc,
   collection,
@@ -17,7 +13,12 @@ import {
   query,
   where,
 } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { SharedService } from '../shared/shared.service';
+import {
+  Reservation,
+  ReservationsStorage,
+} from './reservation-card/reservation.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,7 @@ export class ReservationsService {
     this.firestore,
     'reservation_files'
   );
+  private storageKey = 'storedReservations';
 
   public getReservations(): Reservation[] | null {
     return this.reservations.value;
@@ -48,13 +50,13 @@ export class ReservationsService {
     this.reservations.next(reservations);
   }
 
-  public deleteReservation(id: string): void {
-    const index: number | undefined = this.reservations.value?.findIndex(
-      (res) => res.id === id
-    );
-
-    if (index != undefined && index > -1)
-      this.reservations.value?.splice(index, 1);
+  public readReservations(): void {
+    const localStorageReservations = this.readReservationsFromLocalStorage();
+    if (localStorageReservations.length > 0) {
+      this.reservations$ = of(localStorageReservations);
+    } else {
+      this.readReservationsFromFirestore();
+    }
   }
 
   public readReservationsFromFirestore(): void {
@@ -84,6 +86,23 @@ export class ReservationsService {
     }
   }
 
+  public readReservationFile(
+    reservationId: string,
+    localStorageId: string
+  ): void {
+    try {
+      const localStorageReservationFileContent =
+        this.readReservationFileFromLocalStorage(localStorageId);
+      if (localStorageReservationFileContent != '') {
+        this.reservationFile$ = of<string>(localStorageReservationFileContent);
+      } else {
+        this.readReservationFileFromFirestore(reservationId);
+      }
+    } catch (e) {
+      this.readReservationFileFromFirestore(reservationId);
+    }
+  }
+
   public readReservationFileFromFirestore(reservationId: string): void {
     this.sharedService.activateSpinner();
     const q = query(
@@ -102,21 +121,22 @@ export class ReservationsService {
     }
   }
 
-  public createReservationInFirestore(reservation: Reservation): void {
-    if (!reservation) return;
+  public async createReservationInFirestore(
+    reservation: Reservation
+  ): Promise<string> {
+    if (!reservation) return '';
 
     const reservationFileContent = reservation.fileContent;
 
     reservation.fileContent = '';
 
-    addDoc(this.reservationsCollection, reservation).then(
-      (documentReference: DocumentReference) => {
-        this.createReservationFileInFirestore(
-          reservationFileContent,
-          documentReference.id
-        );
-      }
+    const docRef: DocumentReference = await addDoc(
+      this.reservationsCollection,
+      reservation
     );
+    this.createReservationFileInFirestore(reservationFileContent, docRef.id);
+
+    return docRef.id;
   }
 
   public createReservationFileInFirestore(
@@ -133,6 +153,13 @@ export class ReservationsService {
         //console.log(documentReference);
       }
     );
+  }
+
+  public deleteReservation(reservationId: string): void {
+    if (!reservationId) return;
+    this.deleteReservationFromLocalStorage(reservationId);
+    this.deleteReservationInFirestore(reservationId);
+    this.reservations$ = of(this.readReservationsFromLocalStorage());
   }
 
   public deleteReservationInFirestore(reservationId: string): void {
@@ -156,5 +183,138 @@ export class ReservationsService {
         console.error('DELETE RESERVATION ERROR', error);
       }
     });
+  }
+
+  public saveReservationToLocalStorage(reservation: Reservation): void {
+    const localStorageReservationsString = localStorage.getItem(
+      this.storageKey
+    );
+    if (localStorageReservationsString) {
+      const localReservationStorage: ReservationsStorage = JSON.parse(
+        localStorageReservationsString
+      );
+      localReservationStorage.reservations.push(reservation);
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(localReservationStorage)
+      );
+    } else {
+      const localReservationStorage: ReservationsStorage = {
+        date: new Date(),
+        reservations: [reservation],
+      };
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(localReservationStorage)
+      );
+    }
+  }
+
+  public readReservationsFromLocalStorage(): Reservation[] {
+    const localStorageReservationsString = localStorage.getItem(
+      this.storageKey
+    );
+
+    if (!localStorageReservationsString) return [];
+
+    var startDate = new Date(this.selectedDateRange$.value[0]);
+    startDate.setHours(0, 0, 0, 0);
+    const startDateTimeStamp = Timestamp.fromDate(startDate);
+    var endDate = new Date(this.selectedDateRange$.value[1]);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+    const endDateTimeStamp = Timestamp.fromDate(endDate);
+
+    const localReservationStorage: ReservationsStorage = JSON.parse(
+      localStorageReservationsString
+    );
+
+    return localReservationStorage.reservations
+      .filter(
+        (reservation) =>
+          reservation?.dateTime &&
+          reservation.dateTime.seconds >= startDateTimeStamp.seconds &&
+          reservation.dateTime.seconds < endDateTimeStamp.seconds
+      )
+      .sort((a, b) => {
+        if (!a.dateTime || !b.dateTime) return 0;
+        return a.dateTime.seconds - b.dateTime.seconds;
+      });
+  }
+
+  public readReservationFileFromLocalStorage(localStorageId: string): string {
+    const localStorageReservationsString = localStorage.getItem(
+      this.storageKey
+    );
+
+    if (!localStorageReservationsString) return '';
+
+    const localReservationStorage: ReservationsStorage = JSON.parse(
+      localStorageReservationsString
+    );
+
+    const reservationById = localReservationStorage.reservations.filter(
+      (reservation) => reservation.localStorageId === localStorageId
+    )[0];
+
+    return reservationById.fileContent;
+  }
+
+  public checkReservationLocalStorageDate(): void {
+    const localStorageReservationsString = localStorage.getItem(
+      this.storageKey
+    );
+
+    if (localStorageReservationsString) {
+      const localReservationStorage: ReservationsStorage = JSON.parse(
+        localStorageReservationsString
+      );
+      const currentDate = new Date();
+      const localStorageDate = new Date(localReservationStorage.date);
+      if (
+        currentDate.getMonth() > localStorageDate.getMonth() ||
+        currentDate.getDate() > localStorageDate.getDate()
+      ) {
+        localStorage.setItem(
+          this.storageKey,
+          JSON.stringify({
+            date: currentDate,
+            reservations: localReservationStorage.reservations.filter(
+              (reservation) =>
+                reservation.dateTime &&
+                Math.floor(currentDate.getTime() / 1000) <=
+                  reservation.dateTime?.seconds
+            ),
+          })
+        );
+      }
+    } else {
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify({ date: new Date(), reservations: [] })
+      );
+    }
+  }
+
+  public deleteReservationFromLocalStorage(id: string): void {
+    const localStorageReservationsString = localStorage.getItem(
+      this.storageKey
+    );
+
+    if (!localStorageReservationsString) return;
+
+    const localReservationStorage: ReservationsStorage = JSON.parse(
+      localStorageReservationsString
+    );
+
+    localReservationStorage.reservations =
+      localReservationStorage.reservations.filter(
+        (reservation) => reservation.id !== id
+      );
+
+    localStorage.setItem(
+      this.storageKey,
+      JSON.stringify(localReservationStorage)
+    );
   }
 }

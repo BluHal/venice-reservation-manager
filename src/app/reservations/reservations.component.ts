@@ -52,7 +52,7 @@ export class ReservationsComponent implements OnInit {
   });
 
   constructor(public reservationService: ReservationsService) {
-    this.reservationService.readReservationsFromFirestore();
+    this.reservationService.readReservations();
   }
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class ReservationsComponent implements OnInit {
     const startDate = this.filterDate.value.start || new Date();
     const endDate = this.filterDate.value.end || new Date();
     this.selectedDateRange$.next([startDate, endDate]);
-    this.reservationService.readReservationsFromFirestore();
+    this.reservationService.readReservations();
   }
 
   setSelectedDate(type: string): void {

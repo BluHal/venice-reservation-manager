@@ -47,9 +47,10 @@ export class ReservationCardComponent implements OnInit {
   constructor(public reservationsService: ReservationsService) {}
 
   ngOnInit() {
-    this.date = moment(this.reservation.dateTime?.toDate()).format(
-      'DD/MM/YYYY HH:mm'
-    );
+    if (!this.reservation.dateTime) return;
+    this.date = moment
+      .unix(this.reservation.dateTime.seconds)
+      .format('DD/MM/YYYY HH:mm');
   }
 
   swipeCardLeft(): void {
@@ -76,15 +77,14 @@ export class ReservationCardComponent implements OnInit {
 
   deleteItem(): void {
     // this.reservationsService.deleteReservation(this.reservation.id || '');
-    this.reservationsService.deleteReservationInFirestore(
-      this.reservation.id || ''
-    );
+    this.reservationsService.deleteReservation(this.reservation.id || '');
   }
 
   showTicket(): void {
     this.currentState = 'original';
-    this.reservationsService.readReservationFileFromFirestore(
-      this.reservation.id || ''
+    this.reservationsService.readReservationFile(
+      this.reservation.id || '',
+      this.reservation.localStorageId
     );
     this.reservationsService.reservationFile$?.subscribe((res) => {
       this.fileContent = res;

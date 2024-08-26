@@ -9,6 +9,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { SharedService } from './shared/shared.service';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { ProgrammeService } from './shared/services/programme.service';
+import { ReservationsService } from './reservations/reservations.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -31,7 +32,8 @@ export class AppComponent implements OnInit {
   constructor(
     private sharedService: SharedService,
     private router: Router,
-    private programmeService: ProgrammeService
+    private programmeService: ProgrammeService,
+    private reservationService: ReservationsService
   ) {}
 
   ngOnInit() {
@@ -39,6 +41,8 @@ export class AppComponent implements OnInit {
     if (!this.sharedService.checkUserData()) {
       this.router.navigateByUrl('/log-in');
     }
+
+    this.reservationService.checkReservationLocalStorageDate();
   }
 
   testGetProgramme(): void {

@@ -7,4 +7,10 @@ export interface Reservation {
   fileContent: string;
   id?: string;
   uid: string;
+  localStorageId: string;
+}
+
+export interface ReservationsStorage {
+  date: Date,
+  reservations: Reservation[]
 }
